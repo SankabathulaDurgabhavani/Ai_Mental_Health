@@ -19,17 +19,23 @@ load_dotenv(override=True)
 app = FastAPI()
 
 # OpenRouter API key will be read per-request to avoid caching issues
+# app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client["mental_health_app"]
+MONGODB_URI = os.getenv("MONGODB_URI")
+DB_NAME = os.getenv("DB_NAME", "Mental_health")
+client = MongoClient(MONGODB_URI)
+db = client[DB_NAME]
 users_collection = db["users"]
 analyses_collection = db["analyses"]
 emotion_analyses_collection = db["emotion_analyses"]
